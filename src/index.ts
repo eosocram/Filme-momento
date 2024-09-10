@@ -1,9 +1,14 @@
 import express from 'express';
 import axios from 'axios';
+import dotenv from 'dotenv';
 
+
+
+dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
-const apiKey = process.env.API_KEY;
+const apiKey = process.env.MOVIEDB_API_KEY;
+
 
 app.get('/movies', async (req, res) => {
     try {
