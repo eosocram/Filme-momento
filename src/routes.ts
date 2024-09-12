@@ -1,11 +1,9 @@
 
 import axios from 'axios'; 
 import { Router } from 'express';
-import dotenv from 'dotenv';
-//import cors from 'cors';
 
 
-dotenv.config();
+
 const router = Router();
 const apiKey = process.env.MOVIEDB_API_KEY;
 

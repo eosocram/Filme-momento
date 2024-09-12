@@ -1,36 +1,55 @@
-import React, {useEffect, useState} from 'react';
-import { fetchMovies } from '../services/movieService';
+import axios from '../services/api';
+import React, { useEffect, useState } from 'react';
 
-const MovieList:React.FC = () => {
-    const [movies, setMovies] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+interface Movie {
+  id: number;
+  title: string;
+  description: string;
+  rating: number;
+}
 
-    useEffect(() => {
-        const loadMovies = async () => {
-            try {
-                const movieData = await fetchMovies();
-                setMovies(movieData);
-            }catch (error) {
-                console.error('Error loading movies', error);
-            }finally {
-                setLoading(false);
-            }
-        };
+const MovieList: React.FC = () => {
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [loading, setLoading] = useState<boolean>(true); 
+  const [error, setError] = useState<string | null>(null); 
 
-        loadMovies();
-    }, []);
+  useEffect(() => {
+    const fetchMovies = async () => {
+      try {
+        const response = await axios.get<Movie[]>('/movies'); 
+        setMovies(response.data);
+        setLoading(false); 
+      } catch (err: any) {
+        setError(err.message || 'Erro ao carregar filmes'); 
+        setLoading(false); 
+        console.error('Error loading movies', err);
+      }
+    };
 
-    if(loading) return <div>Loading...</div>;
-    return (
-        <div>
-            <h1>Movies</h1>
-            <ul>
-            {movies.map((movie) => (
-                <li key={movie.id}>{movie.title}</li>
-            ))}    
-            </ul>
-        </div>
-    );
+    fetchMovies();
+  }, []);
+
+  if (loading) return <p>Carregando filmes...</p>; 
+  if (error) return <p>{error}</p>;
+
+  return (
+    <div className="container mt-4">
+      <h1 className="text-center mb-4">Lista de Filmes</h1>
+      <div className="row">
+        {movies.map(movie => (
+          <div className="col-md-4 mb-4" key={movie.id}>
+            <div className="card h-100">
+              <div className="card-body">
+                <h5 className="card-title">{movie.title}</h5>
+                <p className="card-text">Nota: {movie.rating}</p>
+                <p className="card-text">{movie.description}</p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 };
 
 export default MovieList;

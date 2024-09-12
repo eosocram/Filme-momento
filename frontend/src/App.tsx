@@ -2,7 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MoviesList from './components/MoviesList';
 import MovieDetail from './components/MovieDetail';
-import Layout from './components/Layout';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 const App: React.FC = () => {
   return (

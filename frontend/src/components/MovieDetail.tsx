@@ -1,49 +1,56 @@
 // src/components/MovieDetail.tsx
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import { fetchMovieById } from '../services/api';
+import axios from '../services/api';
 
-const MovieDetail: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const [movie, setMovie] = useState<any | null>(null);
+interface Movie {
+  id: number;
+  title: string;
+  description: string;
+  rating: number;
+}
+
+const MoviesList: React.FC = () => {
+  const [movies, setMovies] = useState<Movie[]>([]); 
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<null | string>(null); 
 
   useEffect(() => {
-    const loadMovie = async () => {
-      if (id) { // Verificação para garantir que o id não seja undefined
-        try {
-          const movieData = await fetchMovieById(id);
-          setMovie(movieData);
-        } catch (error) {
-          console.error('Error loading movie:', error);
-        } finally {
-          setLoading(false);
-        }
-      } else {
-        setLoading(false); // Se o ID for undefined, interrompa o carregamento
+    const fetchMovies = async () => {
+      try {
+        const response = await axios.get('/movies');
+        setMovies(response.data); 
+        setLoading(false);
+      } catch (err) {
+        setError('Ocorreu um erro ao carregar os filmes.');
+        setLoading(false);
       }
     };
 
-    loadMovie();
-  }, [id]);
+    fetchMovies();
+  }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) {
+    return <p>Carregando filmes...</p>;
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <div>
-      {movie ? (
-        <div>
-          <h1>{movie.title}</h1>
-          <p>Year: {movie.year}</p>
-          <p>Director: {movie.director}</p>
-        </div>
-      ) : (
-        <p>Movie not found.</p>
-      )}
+      <h1>Lista de Filmes</h1>
+      <ul>
+        {movies.map((movie) => (
+          <li key={movie.id}>
+            <h2>{movie.title}</h2>
+            <p>{movie.description}</p>
+            <p>Nota: {movie.rating}</p>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
 
-
-
-export default MovieDetail;
+export default MoviesList;

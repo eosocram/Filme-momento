@@ -1,21 +1,18 @@
 import axios from 'axios';
-
-
 const api = axios.create({
-    baseURL: 'https://super-train-7qxv9p6qqrvhw6p5-3000.app.github.dev'
+  baseURL: 'https://api.themoviedb.org/3/movie/now_playing', 
+  headers: {
+      Authorization: `eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI5NTY3YTQ5ZTBlMjU5YzJhM2IxZmY1YTQ3YjNkNTAxMCIsIm5iZiI6MTcyNjE4MDE3My40NjcxODcsInN1YiI6IjY2ZGY1ODU0YjBiODQxNjcwMjNhZTNhZCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.axpKPiwNwza5TrTA6MoBu-zElAu76KnmxbMmOvdbueg` 
+  }
 });
+export default api;
 
-export default api; 
-export const fetchMovieById = async (id: string) => { 
-    try {
-        const response = await fetch(`${'https://super-train-7qxv9p6qqrvhw6p5-3000.app.github.dev'}/${id}`); 
-        if (!response.ok) {
-          throw new Error(`Erro ao buscar o filme com ID: ${id}`);
-        }
-        const movieData = await response.json(); // Convertendo a resposta para JSON
-        return movieData;
-      } catch (error) {
-        console.error('Erro ao buscar o filme:', error);
-        throw error; // Propagando o erro para ser tratado no componente
-      }
+export const fetchMovieById = async (id: string) => {
+  try {
+    const response = await api.get(`/movie/${id}`); 
+    return response.data; 
+  } catch (error) {
+    console.error('Erro ao buscar o filme:', error);
+    throw error; 
+  }
 };
